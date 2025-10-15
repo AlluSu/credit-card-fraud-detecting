@@ -5,6 +5,11 @@ import numpy as np
 import os, sys, subprocess
 import pandas as pd
 from inspect import signature
+from xgboost_classifier import xgboost_classifier
+
+def XGB_drive(X, y, smote=False, threshold=0.50):
+    return xgboost_classifier(X, y, smote=smote, threshold=threshold)
+
 
 def RF_drive(X,y, smote_trigger):
     #metrics = random_forest(X,y, smote_trigger=smote_trigger)
@@ -12,7 +17,14 @@ def RF_drive(X,y, smote_trigger):
     #y_test = metrics['y_test'] if 'y_test' in metrics else None
     #plot_roc_pr(y_test, proba)
 
-    return random_forest(X, y, smote_trigger=smote_trigger)
+    sig = signature(logistic_regression)
+    kwargs = {}
+    # handle smote / smote_trigger name difference
+    if "smote" in sig.parameters:
+        kwargs["smote"] = smote_trigger
+    elif "smote_trigger" in sig.parameters:
+        kwargs["smote_trigger"] = smote_trigger
+    return random_forest(X, y, **kwargs)
 
 def LR_drive(X,y, smote_trigger, threshold=0.5):
     #metrics = logistic_regression(X,y, smote_trigger=smote_trigger)
@@ -44,8 +56,8 @@ def build_explore_preview(X, y, n_head: int = 20):
 
 
 def run_streamlit():
-    app = os.path.join(os.path.dirname(__file__), "app.py")
 
+    app = os.path.join(os.path.dirname(__file__), "app.py")
     return subprocess.call([sys.executable, "-m", "streamlit", "run", app])
 
 
