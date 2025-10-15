@@ -1,27 +1,53 @@
 from LoadNPrep import data_loader
 from random_forest import random_forest, plot_roc_pr
 from logistic_regression import logistic_regression
+import numpy as np
+import os, sys, subprocess
+import pandas as pd
+from inspect import signature
 
 def RF_drive(X,y, smote_trigger):
-    metrics = random_forest(X,y, smote_trigger=False)
-    proba = metrics['proba'] if 'proba' in metrics else None
-    y_test = metrics['y_test'] if 'y_test' in metrics else None
-    plot_roc_pr(y_test, proba)
+    #metrics = random_forest(X,y, smote_trigger=smote_trigger)
+    #proba = metrics['proba'] if 'proba' in metrics else None
+    #y_test = metrics['y_test'] if 'y_test' in metrics else None
+    #plot_roc_pr(y_test, proba)
+
+    return random_forest(X, y, smote_trigger=smote_trigger)
+
+def LR_drive(X,y, smote_trigger, threshold=0.5):
+    #metrics = logistic_regression(X,y, smote_trigger=smote_trigger)
+    #proba = metrics['proba'] if 'proba' in metrics else None
+    #y_test = metrics['y_test'] if 'y_test' in metrics else None
+    #plot_roc_pr(y_test, proba)
+
+    sig = signature(logistic_regression)
+    kwargs = {}
+    # handle smote / smote_trigger name difference
+    if "smote" in sig.parameters:
+        kwargs["smote"] = smote_trigger
+    elif "smote_trigger" in sig.parameters:
+        kwargs["smote_trigger"] = smote_trigger
+    # only pass threshold if supported
+    if "threshold" in sig.parameters:
+        kwargs["threshold"] = threshold
+
+    return logistic_regression(X, y, **kwargs)
+
+def build_explore_preview(X, y, n_head: int = 20):
+    X_df = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X.copy()
+    y_s  = pd.Series(y, name="Class") if not hasattr(y, "name") else y.rename("Class")
+    df_preview = X_df.copy()
+    df_preview["Class"] = y_s.values
+    counts = pd.Series(y_s).value_counts().sort_index()
+    counts = counts.rename({0: "Not Fraud", 1: "Fraud"})  # safe even if labels differ
+    return df_preview.head(n_head), counts
 
 
+def run_streamlit():
+    app = os.path.join(os.path.dirname(__file__), "app.py")
 
-def driver():
-
-    X,y = data_loader()
-    logistic_regression(X, y, smote=False)
-
-    # For none smote
-    RF_drive(X,y, False) 
-
-    # For smote
-    # RF_drive(X,y, True)
-
+    return subprocess.call([sys.executable, "-m", "streamlit", "run", app])
 
 
 if __name__ == "__main__":
-    driver()
+    sys.exit(run_streamlit())
