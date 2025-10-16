@@ -34,6 +34,7 @@ CACHE_FILE = "cached_data.json"
 def cache_finder(name):
     """Retrieve a value from the cache, converting lists back to NumPy arrays."""
     # Ensure the JSON file exists
+    print(f"Finding Cache for {name}")
     if not os.path.exists(CACHE_FILE):
         with open(CACHE_FILE, "w") as f:
             json.dump({}, f)
@@ -44,9 +45,12 @@ def cache_finder(name):
     
     # Retrieve the item if it exists
     if name in cache:
+        print(f"{name} found in cache")
         value = convert_to_numpy(cache[name])
         return True, value
     else:
+        print("No cache found...")
+        print("Returning to model building")
         return False, None
     
 

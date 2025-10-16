@@ -84,8 +84,10 @@ def logistic_regression(X, y, smote_trigger=False):
     print("LogisticRegression built successfully")
     if smote_trigger:
         cacher("LR_smote", metrics_dict)
+        print("Logistic regression SMOTE model cached as JSON successfully")
     else:
         cacher("LR_no_smote", metrics_dict)
+        print("Logistic regression non SMOTE model cached as JSON successfully")
     return metrics_dict
 
 
