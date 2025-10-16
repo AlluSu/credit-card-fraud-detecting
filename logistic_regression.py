@@ -10,16 +10,24 @@ from sklearn.metrics import (
 import matplotlib.pyplot as plt
 import seaborn as sns
 from imblearn.over_sampling import SMOTE
+from cache import cache_finder, cacher
 
 def logistic_regression(X, y, smote_trigger=False):
+    
 
     X_train, X_test, y_train, y_test =  train_test_split(X, y, test_size=0.05)
 
     if smote_trigger:
+        trigger, cache_metrics = cache_finder("LR_smote")
+        if trigger:
+            return cache_metrics
         print("Applying SMOTE...")
         sm = SMOTE(sampling_strategy='minority', random_state=42)
         X_train, y_train = sm.fit_resample(X_train, y_train)
-
+    else:
+        trigger, cache_metrics = cache_finder("LR_no_smote")
+        if trigger:
+            return cache_metrics
     model = LogisticRegression(solver="liblinear")
     clf = model.fit(X_train, y_train)
 
@@ -69,11 +77,15 @@ def logistic_regression(X, y, smote_trigger=False):
         "confusion_matrix": confusion_matrix(y_test, pred),
         "classification_report": classification_report(y_test, pred, digits=4),
         "f2_score": fbeta_score(y_test, pred, beta=2),
-        "y_test": y_test,      # for external plotting
-        "proba": proba         # for external plotting
+        "y_test": np.array(y_test),      # for external plotting
+        "proba": np.array(proba)         # for external plotting
     }
 
     print("LogisticRegression built successfully")
+    if smote_trigger:
+        cacher("LR_smote", metrics_dict)
+    else:
+        cacher("LR_no_smote", metrics_dict)
     return metrics_dict
 
 
