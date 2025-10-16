@@ -301,5 +301,16 @@ with tabs[5]:
 # ---------- Findings ----------
 with tabs[6]:
     st.subheader("Findings")
-    st.write("To be implemented...")
-    st.write("Summary of findings, conclusions, next steps, etc.")
+    st.markdown("""
+    ### Key Findings
+    - **Severely skewed target.** Fraud is rare, so accuracy is not informative; **PR AUC** and **F2** (recall-weighted) are the right lenses.
+    - **Baseline performance is solid but uneven.** Without resampling, models can post high ROC AUC while still missing many frauds at default thresholds.
+    - **SMOTE helps recall.** Synthetic minority oversampling generally **improves recall** (and F2) at the cost of some precision. This trade-off is acceptable in fraud settings where a missed fraud is costlier than a false alert.
+                      """)
+    
+    st.markdown("""
+### Business Implications
+- **Favor recall**: It’s typically cheaper to review a flagged transaction than to miss a fraudulent one.
+- **Use PR curves, not just ROC**: PR highlights performance in the rare-event regime relevant to operations.
+- **Operate at a tuned threshold**: Choose a point on the PR curve that aligns with review capacity and loss tolerance.
+""")
