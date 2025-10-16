@@ -49,9 +49,9 @@ with tabs[0]:
 **Goal.** Build a performant, interpretable classifier for rare fraud events.
 
 **Core questions**
-1. Which models balance recall and precision best for rare fraud?
-2. How much does SMOTE help?
-3. What thresholds/metrics are most informative for the business?
+1. Which models perform best with highly unbalanced datasets?
+2. How much does SMOTE (Synthetic minority oversampling technique) help?
+3. Which measurment should we optimized, precision or recall?
 
 **Evaluation focus**
 - Stratified train/test split  
@@ -311,6 +311,4 @@ with tabs[6]:
     st.markdown("""
 ### Business Implications
 - **Favor recall**: It’s typically cheaper to review a flagged transaction than to miss a fraudulent one.
-- **Use PR curves, not just ROC**: PR highlights performance in the rare-event regime relevant to operations.
-- **Operate at a tuned threshold**: Choose a point on the PR curve that aligns with review capacity and loss tolerance.
 """)
