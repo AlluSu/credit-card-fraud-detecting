@@ -1,5 +1,5 @@
 from LoadNPrep import data_loader
-from random_forest import random_forest, plot_roc_pr
+from random_forest import random_forest
 from logistic_regression import logistic_regression
 import numpy as np
 import os, sys, subprocess

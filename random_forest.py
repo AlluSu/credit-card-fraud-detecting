@@ -83,47 +83,6 @@ def random_forest(X, y, smote_trigger=False):
 
 
 
-def plot_roc_pr(y_true, proba):
-    print('Plotting roc and pr curves..')
-    """
-    Plots ROC curve and Precision-Recall curve.
-    
-    Parameters:
-        y_true : array-like, true labels
-        proba  : array-like, predicted probabilities for positive class
-    """
-
-    # -------- ROC Curve --------
-    fpr, tpr, thresholds_roc = roc_curve(y_true, proba)
-    roc_auc = auc(fpr, tpr)
-
-    plt.figure(figsize=(12, 5))
-
-    plt.subplot(1, 2, 1)
-    plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.4f})')
-    plt.plot([0, 1], [0, 1], color='navy', lw=1, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver Operating Characteristic (ROC) Curve')
-    plt.legend(loc="lower right")
-
-    # -------- Precision-Recall Curve --------
-    precision, recall, thresholds_pr = precision_recall_curve(y_true, proba)
-    pr_auc = average_precision_score(y_true, proba)
-
-    plt.subplot(1, 2, 2)
-    plt.plot(recall, precision, color='blue', lw=2, label=f'PR curve (AP = {pr_auc:.4f})')
-    plt.xlabel('Recall')
-    plt.ylabel('Precision')
-    plt.title('Precision-Recall Curve')
-    plt.legend(loc='lower left')
-
-    plt.tight_layout()
-    plt.show()
-
-
 # Use predicted probabilities from the test set
 # You need to modify your random_forest function to also return `proba` if not already:
 # proba = clf.predict_proba(X_test)[:, 1]
