@@ -18,7 +18,7 @@ except Exception:
 from main import LR_drive, RF_drive, build_explore_preview
 
 st.set_page_config(page_title="Credit Card Fraud", page_icon="", layout="wide")
-st.title("Credit Card Fraud — Lightweight Streamlit App")
+st.title("Credit Card Fraud — Streamlit App")
 
 # ---------- Data load ----------
 @st.cache_resource(show_spinner=True)
