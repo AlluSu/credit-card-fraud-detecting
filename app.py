@@ -250,32 +250,53 @@ with tabs[5]:
             st.bar_chart(plot_df)
 
         # Optional: overlay ROC curves (if multiple y/proba available)
-        with st.expander("Overlayed ROC curves (if available)"):
-            # Collect (y_test, proba, label)
-            curves = []
-            def add_curve(res, label):
-                y_test, proba = res.get("y_test"), res.get("proba")
-                if (y_test is not None) and (proba is not None):
-                    curves.append((y_test, proba, label))
+        # ---- Side-by-side overlay plots (smaller) ----
+        # Collect curves once
+        roc_curves, pr_curves = [], []
 
-            if lr:
-                add_curve(lr[0], "LogReg — No SMOTE")
-                add_curve(lr[1], "LogReg — SMOTE")
-            if rf:
-                add_curve(rf[0], "RF — No SMOTE")
-                add_curve(rf[1], "RF — SMOTE")
-            if xgb:
-                add_curve(xgb[0], "XGB — No SMOTE")
-                add_curve(xgb[1], "XGB — SMOTE")
+        def add_curves(res, label):
+            y_test, proba = res.get("y_test"), res.get("proba")
+            if (y_test is not None) and (proba is not None):
+                roc_curves.append((y_test, proba, label))
+                pr_curves.append((y_test, proba, label))
 
-            if curves:
-                fig, ax = plt.subplots()
-                for y_true, y_prob, label in curves:
-                    RocCurveDisplay.from_predictions(y_true, y_prob, ax=ax, name=label)
-                ax.set_title("ROC Curves — Overlay")
-                st.pyplot(fig)
-            else:
-                st.caption("Run models to see overlayed ROC curves.")
+        if lr:
+            add_curves(lr[0], "LogReg — No SMOTE")
+            add_curves(lr[1], "LogReg — SMOTE")
+        if rf:
+            add_curves(rf[0], "RF — No SMOTE")
+            add_curves(rf[1], "RF — SMOTE")
+        if xgb:
+            add_curves(xgb[0], "XGB — No SMOTE")
+            add_curves(xgb[1], "XGB — SMOTE")
+
+        c_roc, c_pr = st.columns(2)
+
+        with c_roc:
+            with st.expander("Overlayed ROC curves (smaller)"):
+                if roc_curves:
+                    fig, ax = plt.subplots(figsize=(4.2, 3.2))
+                    for y_true, y_prob, label in roc_curves:
+                        RocCurveDisplay.from_predictions(y_true, y_prob, ax=ax, name=label)
+                    ax.set_title("ROC — Overlay", fontsize=9)
+                    ax.legend(fontsize=8)
+                    st.pyplot(fig)
+                else:
+                    st.caption("Run models to see overlayed ROC curves.")
+
+        with c_pr:
+            with st.expander("Overlayed Precision–Recall curves (smaller)"):
+                if pr_curves:
+                    fig, ax = plt.subplots(figsize=(4.2, 3.2))
+                    for y_true, y_prob, label in pr_curves:
+                        PrecisionRecallDisplay.from_predictions(y_true, y_prob, ax=ax, name=label)
+                    ax.set_title("Precision over Recall — Overlay", fontsize=9)
+                    ax.set_xlabel("Recall", fontsize=9)
+                    ax.set_ylabel("Precision", fontsize=9)
+                    ax.legend(loc="lower left", fontsize=8)
+                    st.pyplot(fig)
+                else:
+                    st.caption("Run models to see overlayed Precision–Recall curves.")
 
 # ---------- Findings ----------
 with tabs[6]:
