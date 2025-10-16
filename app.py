@@ -238,7 +238,7 @@ with tabs[5]:
         st.info("Run at least one model to populate the overview.")
     else:
         df = pd.DataFrame(rows)
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df, width='stretch')
 
         # Quick bar charts for each metric
         metric_cols = ["ROC AUC (test)", "PR AUC (AP)", "F2 Score"]
