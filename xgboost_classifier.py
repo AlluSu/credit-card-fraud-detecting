@@ -9,6 +9,7 @@ from sklearn.metrics import (
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline
 from xgboost import XGBClassifier
+from cache import cache_finder, cacher
 
 def xgboost_classifier(
     X, y,
@@ -49,6 +50,10 @@ def xgboost_classifier(
     )
 
     if smote:
+        trigger, cache_metrics = cache_finder("XGBoost_smote")
+        if trigger:
+            return cache_metrics
+        print("Creating a XGBoost with SMOTE....")
         cv_pipe = Pipeline([
             ("smote", SMOTE(random_state=random_state)),
             ("xgb", base_model)
@@ -59,6 +64,9 @@ def xgboost_classifier(
         X_train_fit, y_train_fit = sm.fit_resample(X_train, y_train)
         clf = base_model.fit(X_train_fit, y_train_fit)
     else:
+        trigger, cache_metrics = cache_finder("XGBoost_no_smote")
+        if trigger:
+            return cache_metrics
         roc_auc_cv = cross_val_score(base_model, X_train, y_train, scoring="roc_auc", cv=cv, n_jobs=-1)
         clf = base_model.fit(X_train, y_train)
 
@@ -74,8 +82,14 @@ def xgboost_classifier(
         "confusion_matrix": confusion_matrix(y_test, pred),
         "classification_report": classification_report(y_test, pred, digits=4),
         "f2_score": fbeta_score(y_test, pred, beta=2),
-        "y_test": y_test,
-        "proba": proba
+        "y_test": np.array(y_test),
+        "proba": np.array(proba)
     }
+    if smote:
+        cacher("XGBoost_smote", metrics_dict)
+        print("XGBoost SMOTE model cached as JSON successfully")
+    else:
+        cacher("XGBoost_no_smote", metrics_dict)
+        print("XGBoost no SMOTE model cached as JSON successfully")
 
     return metrics_dict
