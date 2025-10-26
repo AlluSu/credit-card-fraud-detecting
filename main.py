@@ -12,11 +12,6 @@ def XGB_drive(X, y, smote=False, threshold=0.50):
 
 
 def RF_drive(X,y, smote_trigger):
-    #metrics = random_forest(X,y, smote_trigger=smote_trigger)
-    #proba = metrics['proba'] if 'proba' in metrics else None
-    #y_test = metrics['y_test'] if 'y_test' in metrics else None
-    #plot_roc_pr(y_test, proba)
-
     sig = signature(logistic_regression)
     kwargs = {}
     # handle smote / smote_trigger name difference
@@ -27,11 +22,6 @@ def RF_drive(X,y, smote_trigger):
     return random_forest(X, y, **kwargs)
 
 def LR_drive(X,y, smote_trigger, threshold=0.5):
-    #metrics = logistic_regression(X,y, smote_trigger=smote_trigger)
-    #proba = metrics['proba'] if 'proba' in metrics else None
-    #y_test = metrics['y_test'] if 'y_test' in metrics else None
-    #plot_roc_pr(y_test, proba)
-
     sig = signature(logistic_regression)
     kwargs = {}
     # handle smote / smote_trigger name difference

@@ -1,4 +1,4 @@
-
+"""
 from __future__ import annotations  
 import sys                          
 import pathlib                      
@@ -77,3 +77,4 @@ def main():
 
 if __name__ == "__main__":                             
     main()                                             
+"""
