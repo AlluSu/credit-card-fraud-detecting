@@ -64,7 +64,7 @@ with tabs[1]:
     st.subheader("Preview")
     df_preview, counts = build_explore_preview(X, y, n_head=20)
 
-    st.dataframe(df_preview, width="stretch")
+    st.dataframe(df_preview)
     st.caption(f"Rows (preview): {len(df_preview):,} | Columns: {df_preview.shape[1]}")
 
     st.subheader("Class Balance")
@@ -238,7 +238,7 @@ with tabs[5]:
         st.info("Run at least one model to populate the overview.")
     else:
         df = pd.DataFrame(rows)
-        st.dataframe(df, width='stretch')
+        st.dataframe(df)
 
         # Quick bar charts for each metric
         metric_cols = ["ROC AUC (test)", "PR AUC (AP)", "F2 Score"]
