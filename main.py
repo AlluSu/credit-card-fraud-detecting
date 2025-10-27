@@ -12,7 +12,7 @@ def XGB_drive(X, y, smote=False, threshold=0.50):
 
 
 def RF_drive(X,y, smote_trigger):
-    sig = signature(logistic_regression)
+    sig = signature(random_forest)
     kwargs = {}
     # handle smote / smote_trigger name difference
     if "smote" in sig.parameters:

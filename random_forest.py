@@ -24,8 +24,8 @@ def random_forest(X, y, smote_trigger=False):
             # Pipeline applies SMOTE only to training folds during CV
             pipeline = Pipeline([
                 ('smote', SMOTE(random_state=42)),
-                ('rf', RandomForestClassifier(n_estimators=200, 
-                                              max_depth=7, 
+                ('rf', RandomForestClassifier(n_estimators=400, 
+                                              max_depth=6, 
                                               random_state=42))])
             
             print("Running Random forest pipeline")
@@ -42,8 +42,8 @@ def random_forest(X, y, smote_trigger=False):
         if trigger:
             return cache_metrics
         print("Creating a RandomForest without SMOTE...")
-        clf = RandomForestClassifier(n_estimators=200, 
-                                     max_depth=7, 
+        clf = RandomForestClassifier(n_estimators=400, 
+                                     max_depth=6, 
                                      random_state=42)
         print("Running Random forest pipeline")
         roc_auc_cv = cross_val_score(clf, 
