@@ -12,28 +12,10 @@ def XGB_drive(X, y, smote=False, threshold=0.50):
 
 
 def RF_drive(X,y, smote_trigger):
-    sig = signature(random_forest)
-    kwargs = {}
-    # handle smote / smote_trigger name difference
-    if "smote" in sig.parameters:
-        kwargs["smote"] = smote_trigger
-    elif "smote_trigger" in sig.parameters:
-        kwargs["smote_trigger"] = smote_trigger
-    return random_forest(X, y, **kwargs)
+    return random_forest(X, y, smote_trigger=smote_trigger)
 
-def LR_drive(X,y, smote_trigger, threshold=0.5):
-    sig = signature(logistic_regression)
-    kwargs = {}
-    # handle smote / smote_trigger name difference
-    if "smote" in sig.parameters:
-        kwargs["smote"] = smote_trigger
-    elif "smote_trigger" in sig.parameters:
-        kwargs["smote_trigger"] = smote_trigger
-    # only pass threshold if supported
-    if "threshold" in sig.parameters:
-        kwargs["threshold"] = threshold
-
-    return logistic_regression(X, y, **kwargs)
+def LR_drive(X,y, smote_trigger):
+    return logistic_regression(X, y, smote_trigger=smote_trigger)
 
 def build_explore_preview(X, y, n_head: int = 20):
     X_df = pd.DataFrame(X) if not isinstance(X, pd.DataFrame) else X.copy()

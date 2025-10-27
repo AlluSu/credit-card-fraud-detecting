@@ -18,7 +18,7 @@ except Exception:
 from main import LR_drive, RF_drive, build_explore_preview
 
 st.set_page_config(page_title="Credit Card Fraud", page_icon="", layout="wide")
-st.title("Credit Card Fraud Detection")
+st.title("Credit Card Fraud — Lightweight Streamlit App")
 
 # ---------- Data load ----------
 @st.cache_resource(show_spinner=True)
@@ -64,7 +64,7 @@ with tabs[1]:
     st.subheader("Preview")
     df_preview, counts = build_explore_preview(X, y, n_head=20)
 
-    st.dataframe(df_preview)
+    st.dataframe(df_preview, width="stretch")
     st.caption(f"Rows (preview): {len(df_preview):,} | Columns: {df_preview.shape[1]}")
 
     st.subheader("Class Balance")
@@ -110,9 +110,9 @@ with tabs[2]:
     st.subheader("Logistic Regression Results (No SMOTE vs SMOTE)")
 
     @st.cache_resource(show_spinner=True)
-    def compute_lr_runs(_key, X, y, threshold=0.50):
-        res_no = LR_drive(X, y, smote_trigger=False, threshold=threshold)
-        res_sm = LR_drive(X, y, smote_trigger=True,  threshold=threshold)
+    def compute_lr_runs(X, y):
+        res_no = LR_drive(X, y, smote_trigger=False)
+        res_sm = LR_drive(X, y, smote_trigger=True)
         return res_no, res_sm
 
     if "lr_results" not in st.session_state:
@@ -120,13 +120,11 @@ with tabs[2]:
 
     thr_col, btn_col = st.columns([3,1])
     with btn_col:
-        if st.button("Run / Re-run", key="lr_run_btn"):
-            nonce = st.session_state.get("lr_nonce", 0) + 1
-            st.session_state.lr_nonce = nonce
-            st.session_state.lr_results = compute_lr_runs(nonce, X, y)
+        if st.button("Run", key="lr_run_btn"):
+            st.session_state.lr_results = compute_lr_runs( X, y)
 
     if st.session_state.lr_results is None:
-        st.info("Press **Run / Re-run** to train and display Logistic Regression results.")
+        st.info("Press **Run** to train and display Logistic Regression results.")
     else:
         res_no, res_sm = st.session_state.lr_results
         left, right = st.columns(2)
@@ -143,7 +141,7 @@ with tabs[3]:
     st.subheader("Random Forest Results (No SMOTE vs SMOTE)")
 
     @st.cache_resource(show_spinner=True)
-    def compute_rf_runs(_key, X, y):
+    def compute_rf_runs(X, y):
         res_no = RF_drive(X, y, smote_trigger=False)
         res_sm = RF_drive(X, y, smote_trigger=True)
         return res_no, res_sm
@@ -151,13 +149,11 @@ with tabs[3]:
     if "rf_results" not in st.session_state:
         st.session_state.rf_results = None
 
-    if st.button("Run / Re-run", key="rf_run_btn"):
-        nonce = st.session_state.get("rf_nonce", 0) + 1
-        st.session_state.rf_nonce = nonce
-        st.session_state.rf_results = compute_rf_runs(nonce, X, y)
+    if st.button("Run", key="rf_run_btn"):
+        st.session_state.rf_results = compute_rf_runs(X, y)
 
     if st.session_state.rf_results is None:
-        st.info("Press **Run / Re-run** to train and display Random Forest results.")
+        st.info("Press **Run ** to train and display Random Forest results.")
     else:
         rf_no, rf_sm = st.session_state.rf_results
         left, right = st.columns(2)
@@ -238,7 +234,7 @@ with tabs[5]:
         st.info("Run at least one model to populate the overview.")
     else:
         df = pd.DataFrame(rows)
-        st.dataframe(df)
+        st.dataframe(df, width='stretch')
 
         # Quick bar charts for each metric
         metric_cols = ["ROC AUC (test)", "PR AUC (AP)", "F2 Score"]
